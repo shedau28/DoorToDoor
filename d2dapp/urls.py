@@ -3,8 +3,11 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path("", index, name='index'),
+    path("", login_page),
     path("index/", index, name='index'),
+    path("shop/", shop, name='shop'),
+    path("shop/<str:query>", product_detail, name='product_detail'),
+    path("detail/", detail, name='detail'),
     path("login_page/", login_page, name='login_page'),
     path("login/", login, name='login'),
     path("logout/", logout, name='logout'),
@@ -14,5 +17,6 @@ urlpatterns = [
     path("update_data/", update_data, name='update_data'),
     path("change_password/", change_password, name='change_password'),
     path("upload_image/", upload_image, name='upload_image'),
-    # path("remove_image/", remove_image, name='remove_image'),
+    path("product_upload/", product_upload, name='product_upload'),
+    path("update_product_upload/", update_product_upload, name='update_product_upload'),
 ]

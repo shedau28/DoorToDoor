@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 
 # Create your models here.
@@ -29,5 +30,20 @@ class Profile(models.Model):
 
     def __str__(self) -> str:
         return self.email
+
+
+
+
+
+class Product(models.Model):
+    Profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    product_name = models.CharField(max_length=50, default="")
+    product_price = models.IntegerField(default=0)
+    description = models.TextField(max_length=1000, blank=True)
+    product_image = models.FileField(upload_to="product_images/", default="default.png")
+
+
+    def __str__(self) -> str:
+        return self.product_name
 
 

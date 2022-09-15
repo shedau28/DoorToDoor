@@ -1,8 +1,11 @@
 
+from ast import Pass
+from itertools import product
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import *
 from django.conf import settings
+from django.contrib.auth import logout as auth_logout
 # Create your views here.
 context = {
     'user_roles' : UserRole.objects.all()
@@ -10,7 +13,8 @@ context = {
 
 
 def index(request):
-    return render(request, "index.html")
+    profile_data(request)
+    return render(request, "index.html", context)
 
 
 def login_page(request):
@@ -44,11 +48,14 @@ def register(request):
     userrole = UserRole.objects.get(role=request.POST['user_role'])
 
 
-    Profile.objects.create(
+    profile = Profile.objects.create(
         UserRole = userrole,
         email=request.POST['email'],
         password = request.POST['password']
         )
+
+    Product.objects.create(Profile=profile)
+
 
     return redirect(login_page)
 
@@ -61,6 +68,8 @@ def profile_page(request):
         profile_data(request)
         return render(request, 'profile.html', context)
     return redirect(login_page)
+
+
 def update_data(request):
 
     user_profile = Profile.objects.get(email=request.session['email'])
@@ -84,27 +93,12 @@ def upload_image(request):
         user_profile.save()
 
     return redirect(profile_page)
-# from pathlib import Path
-# def remove_image(request):
-#     user_profile = Profile.objects.get(email=request.session['email'])
 
-    
-#     upload_path = Path.joinpath(settings.MEDIA_ROOT, "profile_images/{user_profile.profileimage.url}")
-#     Path(upload_path).unlink()
-    
-#     user_profile.ProfileImage = ""
-#     user_profile.save()
-    
-
-#     print('image removed.')
-#     context['image_uploaded'] = 'false'
-
-#     return redirect(profile_page)
 
 
 def logout(request):
     if 'email' in request.session:
-        del request.session['email']
+        auth_logout(request)
     return redirect(login_page)
 
 def change_password(request):
@@ -117,6 +111,61 @@ def change_password(request):
     else:
         messages.info(request, "Current Password is incorrect")
         return redirect(profile_page)
+
+
+       
+
+
+
+def product_upload(request):
+    if 'email' in request.session:
+        profile = Profile.objects.get(email = request.session['email'])
+        product_data = Product.objects.get(Profile=profile)
+        context = {
+            'product_data' : product_data
+        }
+        return render(request, 'product_upload.html', context)
+    return redirect(login_page)
+
+
+def update_product_upload(request):
+    
+    profile = Profile.objects.get(email = request.session['email'])
+    product_data = Product.objects.get(Profile=profile)
+
+    if 'product_image' in request.FILES:
+        product_data.product_image = request.FILES['product_image']
+        product_data.product_name = request.POST['product_name']
+        product_data.description = request.POST['desc']
+        product_data.product_price = request.POST['price']
+        product_data.save()
+        
+
+    return redirect(product_upload)
+
+
+def shop(request):
+    context = {
+        'products' : Product.objects.all()
+    }
+    return render(request, 'shop.html', context)
+
+
+def detail(request):
+    
+    return render(request, "detail.html", context)
+
+def product_detail(request, query):
+    new = query.split()
+    products = Product.objects.filter(product_name__icontains=new[0])
+    context = {
+        'products' : products
+    }
+    return render(request, "detail.html", context)
+
+
+
+
 
 
 

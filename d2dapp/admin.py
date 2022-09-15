@@ -4,3 +4,4 @@ from .models import *
 
 admin.site.register(UserRole)
 admin.site.register(Profile)
+admin.site.register(Product)

@@ -36,14 +36,25 @@
 
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+              <a class="dropdown-item d-flex align-items-center" href="/index/">
                 <i class="bi bi-person"></i>
-                <span>My Profile</span>
+                <span>Home</span>
               </a>
             </li>
             <li>
               <hr class="dropdown-divider">
             </li>
+            {% if profile_data.UserRole.role == 'business owner' %}
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="/product_upload/">
+                <i class="bi bi-person"></i>
+                <span>Upload Product</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            {% endif %}
 
 
 
